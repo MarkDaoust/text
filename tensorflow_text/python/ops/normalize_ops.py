@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2020 TF.Text Authors.
+# Copyright 2021 TF.Text Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -105,7 +105,8 @@ def normalize_utf8_with_offsets_map(input,
 
   Args:
     input: A `Tensor` or `RaggedTensor` of type string. (Must be UTF-8.)
-      normalization_form: One of the following string values ('NFC', 'NFKC').
+      normalization_form: One of the following string values ('NFC', 'NFKC',
+        'NFD', 'NFKD').
         Default is 'NFKC'.
     name: The name for this op (optional).
 

@@ -1,4 +1,4 @@
-// Copyright 2020 TF.Text Authors.
+// Copyright 2021 TF.Text Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -249,6 +249,19 @@ class NormalizeUTF8WithOffsetsMapOp : public tensorflow::OpKernel {
                   errors::Internal(
                       absl::StrCat(icu_error.errorName(),
                                    ": Could not retrieve ICU NFC normalizer")));
+    } else if (normalization_form_ == "NFD") {
+      normalizer = icu::Normalizer2::getNFDInstance(icu_error);
+      OP_REQUIRES(context, icu_error.isSuccess(),
+                  errors::Internal(
+                      absl::StrCat(icu_error.errorName(),
+                                   ": Could not retrieve ICU NFD normalizer")));
+    } else if (normalization_form_ == "NFKD") {
+      normalizer = icu::Normalizer2::getNFKDInstance(icu_error);
+      OP_REQUIRES(context, icu_error.isSuccess(),
+                  errors::Internal(
+                      absl::StrCat(
+                          icu_error.errorName(),
+                          ": Could not retrieve ICU NFKD normalizer")));
     } else {
       OP_REQUIRES(context, false,
                   errors::InvalidArgument(absl::StrCat(

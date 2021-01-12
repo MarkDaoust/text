@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2020 TF.Text Authors.
+# Copyright 2021 TF.Text Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -159,6 +159,30 @@ class NormalizeWithOffsetsMapOpsTest(test.TestCase):
     actual, _ = normalize_ops.normalize_utf8_with_offsets_map(txt, "nfkc")
     self.assertAllEqual(expected, actual)
 
+  def test_normalize_nfkd(self):
+    txt = [
+        u"2⁵",
+    ]
+    expected = [
+        u"25",
+    ]
+    actual, _ = normalize_ops.normalize_utf8_with_offsets_map(txt, "NFKD")
+    self.assertAllEqual(expected, actual)
+    actual, _ = normalize_ops.normalize_utf8_with_offsets_map(txt, "nfkd")
+    self.assertAllEqual(expected, actual)
+
+  def test_normalize_nfd(self):
+    txt = [
+        u"2⁵",
+    ]
+    expected = [
+        u"2⁵",
+    ]
+    actual, _ = normalize_ops.normalize_utf8_with_offsets_map(txt, "NFD")
+    self.assertAllEqual(expected, actual)
+    actual, _ = normalize_ops.normalize_utf8_with_offsets_map(txt, "nfd")
+    self.assertAllEqual(expected, actual)
+
   def test_normalize_nfc(self):
     txt = [
         u"\u1e9b\u0323",
@@ -196,7 +220,7 @@ class NormalizeWithOffsetsMapOpsTest(test.TestCase):
   def test_unaccepted_normalization_form(self):
     with self.assertRaises(errors.InvalidArgumentError):
       bomb = normalize_ops.normalize_utf8_with_offsets_map(
-          ["cant readme", "wont read me"], "NFKD")
+          ["cant readme", "wont read me"], "CANTNORMALIZEME")
       self.evaluate(bomb)
 
 
@@ -244,6 +268,18 @@ class FindSourceOffsetsTest(parameterized.TestCase, test.TestCase):
       dict(
           txt_input=["株式会社ＫＡＤＯＫＡＷＡ"],
           normalization_form="NFKC",
+          post_norm_offsets=22,
+          expected=36),
+      # Test one string and rank = 0 offset input, NFD
+      dict(
+          txt_input=["株式会社ＫＡＤＯＫＡＷＡ"],
+          normalization_form="NFD",
+          post_norm_offsets=36,
+          expected=36),
+      # Test one string and rank = 0 offset input, NFKD
+      dict(
+          txt_input=["株式会社ＫＡＤＯＫＡＷＡ"],
+          normalization_form="NFKD",
           post_norm_offsets=22,
           expected=36),
       # Test one string and rank = 1 offset input
